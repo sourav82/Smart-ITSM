@@ -6,9 +6,9 @@ from requests.auth import HTTPBasicAuth
 import logging
 import random
 
-snow_url=settings.get_secret("snow-url", settings.PROJECT_ID)
-snow_user=settings.get_secret("snow-user", settings.PROJECT_ID)
-snow_password=settings.get_secret("snow-password", settings.PROJECT_ID)
+snow_url=settings.get_secret("snow-url", settings.PROJECT_ID).strip()
+snow_user=settings.get_secret("snow-user", settings.PROJECT_ID).strip()
+snow_password=settings.get_secret("snow-password", settings.PROJECT_ID).strip()
 
 def get_queue_sys_id(queue_name):
 
@@ -95,7 +95,7 @@ def update_incident(sys_id, incident_id, queue, comment="", state=None):
 
     response = requests.patch(
         url,
-        auth=(snow_user, snow_user),
+        auth=(snow_user, snow_password),
         json=payload
     )
 
