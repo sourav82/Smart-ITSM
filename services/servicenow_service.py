@@ -6,9 +6,13 @@ from requests.auth import HTTPBasicAuth
 import logging
 import random
 
+snow_url=settings.get_secret("snow-url", settings.PROJECT_ID)
+snow_user=settings.get_secret("snow-user", settings.PROJECT_ID)
+snow_password=settings.get_secret("snow-password", settings.PROJECT_ID)
+
 def get_queue_sys_id(queue_name):
 
-    url = f"{settings.SERVICENOW_INSTANCE}/api/now/table/sys_user_group"
+    url = f"{snow_url}/api/now/table/sys_user_group"
 
     params = {
         "sysparm_query": f"name={queue_name}",
@@ -17,7 +21,7 @@ def get_queue_sys_id(queue_name):
 
     response = requests.get(
         url,
-        auth=HTTPBasicAuth(settings.SERVICENOW_USER, settings.SERVICENOW_PASSWORD),
+        auth=HTTPBasicAuth(settings.get_secret("snow-user", settings.PROJECT_ID), settings.get_secret("snow-password", settings.PROJECT_ID)),
         headers={"Accept": "application/json"},
         params=params
     )
@@ -31,7 +35,7 @@ def get_queue_sys_id(queue_name):
 
 def get_group_members(group_sys_id):
     print(f"Group sys id: {group_sys_id}")
-    url = f"{settings.SERVICENOW_INSTANCE}/api/now/table/sys_user_grmember"
+    url = f"{snow_url}/api/now/table/sys_user_grmember"
     params = {
         "sysparm_query": f"group={group_sys_id}",
         "sysparm_fields": "user"
@@ -39,7 +43,7 @@ def get_group_members(group_sys_id):
     headers = {
         "Accept": "application/json"
     }           
-    r = requests.get(url, auth=(settings.SERVICENOW_USER, settings.SERVICENOW_PASSWORD), params=params, headers=headers)
+    r = requests.get(url, auth=(snow_user, snow_password), params=params, headers=headers)
     print("Status:", r.status_code)
     print("Response:", r.text)
     if r.status_code != 200:
@@ -63,7 +67,7 @@ def get_group_members(group_sys_id):
 
 def update_incident(sys_id, incident_id, queue, comment="", state=None):
 
-    url = f"{settings.SERVICENOW_INSTANCE}/api/now/table/incident/{sys_id}"
+    url = f"{snow_url}/api/now/table/incident/{sys_id}"
 
     queue_sys_id = get_queue_sys_id(queue)
     # Fetch team members
@@ -91,7 +95,7 @@ def update_incident(sys_id, incident_id, queue, comment="", state=None):
 
     response = requests.patch(
         url,
-        auth=(settings.SERVICENOW_USER, settings.SERVICENOW_PASSWORD),
+        auth=(snow_user, snow_user),
         json=payload
     )
 

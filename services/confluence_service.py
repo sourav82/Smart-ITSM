@@ -6,8 +6,8 @@ import json
 
 class ConfluenceServiceVertex:
     def __init__(self, project_id=settings.PROJECT_NUMBER, location=settings.REGION, index_endpoint_id=None, deployed_index_id=None):
-        self.base_url = settings.CONFLUENCE_URL
-        self.auth = (settings.CONFLUENCE_USER, settings.CONFLUENCE_TOKEN)
+        self.base_url = settings.get_secret("CONFLUENCE_URL", settings.PROJECT_ID)
+        self.auth = (settings.get_secret("CONFLUENCE_USER", settings.PROJECT_ID), settings.get_secret("CONFLUENCE_TOKEN", settings.PROJECT_ID))
 
         self.project_id = project_id
         self.location = location
